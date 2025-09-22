@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Management</title>
+</head>
+<body>
+  <h1>User Management</h1>
+
+  <!-- Add User Form -->
+  <form id="userForm">
+    <input type="text" id="name" placeholder="Enter name" required>
+    <input type="email" id="email" placeholder="Enter email" required>
+    <button type="submit">Add User</button>
+  </form>
+
+  <hr>
+
+  <!-- Show Users -->
+  <button onclick="getUsers()">Show Users</button>
+  <ul id="userList"></ul>
+
+  <script>
+    // Handle form submit
+    document.getElementById("userForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+
+      const res = await fetch("http://localhost:5000/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email })
+      });
+      const data = await res.json();
+      alert("User added: " + JSON.stringify(data));
+    });
+
+    // Get all users
+    async function getUsers() {
+      const res = await fetch("http://localhost:5000/users");
+      const users = await res.json();
+      const list = document.getElementById("userList");
+      list.innerHTML = "";
+      users.forEach(u => {
+        const li = document.createElement("li");
+        li.textContent = `${u.id}: ${u.name} (${u.email})`;
+        list.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
